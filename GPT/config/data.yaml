@@ -1,0 +1,12 @@
+train: ../dataset/images/train
+val: ../dataset/images/val
+
+names:
+  0: no_helmet
+  1: no_gloves
+  2: no_shoes
+  3: no_vest
+  4: using_mobile
+  5: fire
+  6: oil_spill
+  7: restricted_entry
