@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Camera, CameraOff, Shield, AlertTriangle, HardHat, Wind, Layers, Download, BarChart3, TrendingUp, PieChart } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const API_URL = 'http://localhost:5000';
+//const API_URL = 'http://localhost:5000';
+const API_URL = 'http://52.66.137.154:5000';
 
 export default function PPEDetectionApp() {
   const [isStreaming, setIsStreaming] = useState(false);
