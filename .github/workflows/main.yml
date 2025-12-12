@@ -24,11 +24,16 @@ jobs:
         npm install
         npm run build
 
-    - name: Upload to EC2
+    - name: Setup SSH Key
       uses: webfactory/ssh-agent@v0.5.4
       with:
         ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
+    - name: Add EC2 Host to known_hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.HOST_DNS }} >> ~/.ssh/known_hosts
+
     - name: Deploy Frontend Files
       run: |
-        rsync -avz frontend/dist/ ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/ppe-kit/
+        rsync -avz --delete frontend/dist/ ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/ppe-kit/
