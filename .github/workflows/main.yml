@@ -1,34 +1,61 @@
 name: Deploy Frontend
-
+ 
 on:
+
   push:
+
     branches: ["main"]
+
     paths:
+
       - "frontend/**"
-
+ 
 jobs:
+
   deploy:
+
     runs-on: ubuntu-latest
-
+ 
     steps:
+
     - uses: actions/checkout@v3
-
+ 
     - name: Install Node
+
       uses: actions/setup-node@v3
+
       with:
+
         node-version: 18
-
+ 
     - name: Build frontend
+
       run: |
+
         cd frontend
+
         npm install
+
         npm run build
+ 
+    - name: Setup SSH Key
 
-    - name: Upload to EC2
       uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-    - name: Deploy Frontend Files
+      with:
+
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+ 
+    - name: Add EC2 Host to known_hosts
+
       run: |
-        rsync -avz frontend/dist/ ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/ppe-kit/
+
+        mkdir -p ~/.ssh
+
+        ssh-keyscan -H ${{ secrets.HOST_DNS }} >> ~/.ssh/known_hosts
+ 
+    - name: Deploy Frontend Files
+
+      run: |
+
+        rsync -avz --delete frontend/dist/ ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/ppe-kit/
