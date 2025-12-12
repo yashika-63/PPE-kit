@@ -211,7 +211,7 @@ def serve_snapshot(filename):
     """Serve snapshot images"""
     return send_from_directory('snapshots', filename)
 
-@app.route('/api/status', methods=['GET'])
+@app.route('${API_URL}/api/status', methods=['GET'])
 def get_status():
     """Get current system status"""
     return jsonify({
@@ -257,7 +257,7 @@ def export_excel():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/analytics', methods=['GET'])
+@app.route('${API_URL}/api/analytics', methods=['GET'])
 def get_analytics():
     """Get analytics data for dashboard"""
     try:
