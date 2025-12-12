@@ -1,50 +1,34 @@
-name: Push-to-EC2 instance
+name: Deploy Frontend
+
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+    paths:
+      - "frontend/**"
 
 jobs:
   deploy:
-    name: Push to EC2
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v1
+    - uses: actions/checkout@v3
 
-      - name: Deploy to my EC2 instance
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SOURCE: "./"
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
+    - name: Install Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
 
-      - name: Executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm install
+        npm run build
 
-          script: |
-            set -xe
+    - name: Upload to EC2
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-            sudo yum -y update
-            sudo yum install -y httpd
-            sudo systemctl start httpd
-            sudo systemctl enable httpd
-
-            cd /home/ec2-user/ppe-kit/frontend  
-
-            sudo yum install nodejs npm -y
-
-            npm install
-            npm run build
-
-            sudo rm -rf /var/www/html/ppe-kit/*
-            sudo mv dist/* /var/www/html/ppe-kit/
-
-            sudo systemctl restart httpd
+    - name: Deploy Frontend Files
+      run: |
+        rsync -avz frontend/dist/ ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/ppe-kit/
