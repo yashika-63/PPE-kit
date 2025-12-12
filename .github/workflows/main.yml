@@ -1,61 +1,50 @@
-name: Deploy Frontend
- 
+name: Push-to-EC2 instance
 on:
-
   push:
+    branches:
+      - main
 
-    branches: ["main"]
-
-    paths:
-
-      - "frontend/**"
- 
 jobs:
-
   deploy:
-
+    name: Push to EC2
     runs-on: ubuntu-latest
- 
+
     steps:
+      - name: Checkout the code
+        uses: actions/checkout@v1
 
-    - uses: actions/checkout@v3
- 
-    - name: Install Node
+      - name: Deploy to my EC2 instance
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SOURCE: "./"
+          REMOTE_HOST: ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}
 
-      uses: actions/setup-node@v3
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
 
-      with:
+          script: |
+            set -xe
 
-        node-version: 18
- 
-    - name: Build frontend
+            sudo yum -y update
+            sudo yum install -y httpd
+            sudo systemctl start httpd
+            sudo systemctl enable httpd
 
-      run: |
+            cd /home/ec2-user/ppe-kit/frontend  
 
-        cd frontend
+            sudo yum install nodejs npm -y
 
-        npm install
+            npm install
+            npm run build
 
-        npm run build
- 
-    - name: Setup SSH Key
+            sudo rm -rf /var/www/html/ppe-kit/*
+            sudo mv dist/* /var/www/html/ppe-kit/
 
-      uses: webfactory/ssh-agent@v0.5.4
-
-      with:
-
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
- 
-    - name: Add EC2 Host to known_hosts
-
-      run: |
-
-        mkdir -p ~/.ssh
-
-        ssh-keyscan -H ${{ secrets.HOST_DNS }} >> ~/.ssh/known_hosts
- 
-    - name: Deploy Frontend Files
-
-      run: |
-
-        rsync -avz --delete frontend/dist/ ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/ppe-kit/
+            sudo systemctl restart httpd
