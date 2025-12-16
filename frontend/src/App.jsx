@@ -29,7 +29,7 @@ export default function PPEDetectionApp() {
 
   const checkStatus = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/status`);
+      const response = await fetch(`${API_URL}/status`);
       const data = await response.json();
       setIsStreaming(data.is_streaming);
       setCurrentFilter(data.detection_filter);
@@ -40,7 +40,7 @@ export default function PPEDetectionApp() {
 
   const loadAnalytics = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/analytics`);
+      const response = await fetch(`${API_URL}/analytics`);
       const data = await response.json();
       setAnalytics(data);
     } catch (error) {
@@ -50,7 +50,7 @@ export default function PPEDetectionApp() {
 
   const startCamera = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/start-camera`, {
+      const response = await fetch(`${API_URL}/start-camera`, {
         method: 'POST'
       });
       const data = await response.json();
@@ -64,7 +64,7 @@ export default function PPEDetectionApp() {
 
   const stopCamera = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/stop-camera`, {
+      const response = await fetch(`${API_URL}/stop-camera`, {
         method: 'POST'
       });
       const data = await response.json();
@@ -78,7 +78,7 @@ export default function PPEDetectionApp() {
 
   const setFilter = async (filter) => {
     try {
-      const response = await fetch(`${API_URL}/api/set-filter`, {
+      const response = await fetch(`${API_URL}/set-filter`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -96,7 +96,7 @@ export default function PPEDetectionApp() {
 
   const captureSnapshot = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/capture-snapshot`, {
+      const response = await fetch(`${API_URL}/capture-snapshot`, {
         method: 'POST'
       });
       const data = await response.json();
@@ -112,7 +112,7 @@ export default function PPEDetectionApp() {
 
   const loadLogs = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/get-logs`);
+      const response = await fetch(`${API_URL}/get-logs`);
       const data = await response.json();
       setLogs(data);
     } catch (error) {
@@ -122,7 +122,7 @@ export default function PPEDetectionApp() {
 
   const exportToExcel = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/export-excel`);
+      const response = await fetch(`${API_URL}/export-excel`);
       if (!response.ok) throw new Error('Export failed');
       
       const blob = await response.blob();
@@ -296,7 +296,7 @@ export default function PPEDetectionApp() {
               <div className="bg-black rounded-lg overflow-hidden aspect-video flex items-center justify-center">
                 {isStreaming ? (
                   <img
-                    src={`${API_URL}/api/video-feed`}
+                    src={`${API_URL}/video-feed`}
                     alt="Live Feed"
                     className="w-full h-full object-contain"
                   />
