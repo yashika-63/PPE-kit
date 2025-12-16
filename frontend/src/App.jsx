@@ -3,7 +3,7 @@ import { Camera, CameraOff, Shield, AlertTriangle, HardHat, Wind, Layers, Downlo
 import { LineChart, Line, BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 //const API_URL = 'http://localhost:5000';
-const API_URL = 'http://15.207.163.30:5000';
+const API_URL = 'http://15.207.163.30:5000/api';
 
 export default function PPEDetectionApp() {
   const [isStreaming, setIsStreaming] = useState(false);
