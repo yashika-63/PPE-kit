@@ -94,7 +94,7 @@ def generate_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
-@app.route('/api/start-camera', methods=['POST'])
+@app.route('/start-camera', methods=['POST'])
 def start_camera():
     """Start camera streaming"""
     global camera, is_streaming
@@ -109,7 +109,7 @@ def start_camera():
     
     return jsonify({"status": "Camera started"})
 
-@app.route('/api/stop-camera', methods=['POST'])
+@app.route('/stop-camera', methods=['POST'])
 def stop_camera():
     """Stop camera streaming"""
     global camera, is_streaming
@@ -123,13 +123,13 @@ def stop_camera():
     
     return jsonify({"status": "Camera stopped"})
 
-@app.route('/api/video-feed')
+@app.route('/video-feed')
 def video_feed():
     """Video streaming route"""
     return Response(generate_frames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/api/set-filter', methods=['POST'])
+@app.route('/set-filter', methods=['POST'])
 def set_filter():
     """Set detection filter"""
     global detection_filter
@@ -144,7 +144,7 @@ def set_filter():
     detection_filter = filter_mode
     return jsonify({"status": f"Filter set to {filter_mode}"})
 
-@app.route('/api/capture-snapshot', methods=['POST'])
+@app.route('/capture-snapshot', methods=['POST'])
 def capture_snapshot():
     """Capture and save snapshot with detections"""
     global camera
@@ -198,7 +198,7 @@ def capture_snapshot():
         "detections": detection_list
     })
 
-@app.route('/api/get-logs', methods=['GET'])
+@app.route('/get-logs', methods=['GET'])
 def get_logs():
     """Get detection logs"""
     if os.path.exists(log_file):
@@ -211,7 +211,7 @@ def serve_snapshot(filename):
     """Serve snapshot images"""
     return send_from_directory('snapshots', filename)
 
-@app.route('/api/status', methods=['GET'])
+@app.route('/status', methods=['GET'])
 def get_status():
     """Get current system status"""
     return jsonify({
@@ -220,7 +220,7 @@ def get_status():
         "camera_active": camera is not None and camera.isOpened() if camera else False
     })
 
-@app.route('/api/export-excel', methods=['GET'])
+@app.route('/export-excel', methods=['GET'])
 def export_excel():
     """Export detection logs to Excel file"""
     try:
@@ -257,7 +257,7 @@ def export_excel():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/analytics', methods=['GET'])
+@app.route('/analytics', methods=['GET'])
 def get_analytics():
     """Get analytics data for dashboard"""
     try:
